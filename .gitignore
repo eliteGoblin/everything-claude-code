@@ -68,6 +68,9 @@ tasks/
 # Personal configs (if any)
 personal/
 private/
+# fsun_config/ is committed to the fork (eliteGoblin/everything-claude-code)
+# Only ignore generated state files
+fsun_config/.sync-state.json
 
 # Session templates (not committed)
 examples/sessions/*.tmp
