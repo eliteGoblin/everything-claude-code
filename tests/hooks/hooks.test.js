@@ -527,24 +527,6 @@ async function runTests() {
     passed++;
   else failed++;
 
-  // insaits-security-wrapper.js tests
-  console.log('\ninsaits-security-wrapper.js:');
-
-  if (
-    await asyncTest('passes through input unchanged when integration is disabled', async () => {
-      const stdinData = JSON.stringify({
-        tool_name: 'Write',
-        tool_input: { file_path: 'src/index.ts', content: 'console.log("ok");' }
-      });
-      const result = await runScript(path.join(scriptsDir, 'insaits-security-wrapper.js'), stdinData, { ECC_ENABLE_INSAITS: '' });
-      assert.strictEqual(result.code, 0, `Exit code should be 0, got ${result.code}`);
-      assert.strictEqual(result.stdout, stdinData, 'Should pass stdin through unchanged');
-      assert.strictEqual(result.stderr, '', 'Should stay silent when integration is disabled');
-    })
-  )
-    passed++;
-  else failed++;
-
   // check-console-log.js tests
   console.log('\ncheck-console-log.js:');
 
@@ -2025,20 +2007,6 @@ async function runTests() {
     passed++;
   else failed++;
 
-  if (
-    test('InsAIts hook is opt-in and scoped to high-signal tool inputs', () => {
-      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks.json');
-      const hooks = JSON.parse(fs.readFileSync(hooksPath, 'utf8'));
-      const insaitsHook = hooks.hooks.PreToolUse.find(entry => entry.description && entry.description.includes('InsAIts'));
-
-      assert.ok(insaitsHook, 'Should define an InsAIts PreToolUse hook');
-      assert.strictEqual(insaitsHook.matcher, 'Bash|Write|Edit|MultiEdit', 'InsAIts hook should avoid matching every tool');
-      assert.ok(insaitsHook.description.includes('ECC_ENABLE_INSAITS=1'), 'InsAIts hook should document explicit opt-in');
-      assert.ok(insaitsHook.hooks[0].command.includes('insaits-security-wrapper.js'), 'InsAIts hook should execute through the JS wrapper');
-    })
-  )
-    passed++;
-  else failed++;
 
   // plugin.json validation
   console.log('\nplugin.json Validation:');
@@ -2465,6 +2433,9 @@ async function runTests() {
       assert.ok(!observerLoopSource.includes('--max-turns 3'), 'observer-loop should not hardcode a 3-turn limit');
       assert.ok(observerLoopSource.includes('ECC_SKIP_OBSERVE=1'), 'observer-loop should suppress observe.sh for automated sessions');
       assert.ok(observerLoopSource.includes('ECC_HOOK_PROFILE=minimal'), 'observer-loop should run automated analysis with the minimal hook profile');
+      assert.ok(observerLoopSource.includes('prompt_content="$(cat "$prompt_file" 2>/dev/null || true)"'), 'observer-loop should read prompt_file into memory before claude is spawned');
+      assert.ok(observerLoopSource.includes('-p "$prompt_content"'), 'observer-loop should pass in-memory prompt content to claude');
+      assert.ok(!observerLoopSource.includes('-p "$(cat "$prompt_file")"'), 'observer-loop should not re-read prompt_file at invocation time');
     })
   )
     passed++;
