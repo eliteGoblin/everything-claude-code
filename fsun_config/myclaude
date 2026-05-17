@@ -665,11 +665,16 @@ cmd_status() {
     printf "  ${RED}✗${RESET} ~/.claude/       missing ${DIM}(myclaude sync)${RESET}\n"; issues=$((issues+1))
   fi
 
-  local st missing instln
-  st=$(node "$ECC_JS" status 2>/dev/null)
-  missing=$(printf '%s\n' "$st" | grep -oE '[0-9]+ missing' | grep -oE '[0-9]+' | head -1)
-  instln=$(printf '%s\n' "$st" | grep -E '[0-9]+ installed' | head -1 | sed 's/^[[:space:]]*//')
-  if [[ "${missing:-0}" == "0" ]]; then
+  # Capture exit code explicitly: a failed/empty ecc.js run must surface as
+  # an issue, never silently default to a healthy "0 missing".
+  local st rc=0 missing instln
+  st=$(node "$ECC_JS" status 2>&1) || rc=$?
+  instln=$(printf '%s\n' "$st" | grep -oE '[0-9]+ installed, [0-9]+ missing' | head -1)
+  missing=$(printf '%s\n' "$st" | sed -nE 's/.*[0-9]+ installed, ([0-9]+) missing.*/\1/p' | head -1)
+  if [[ $rc -ne 0 || -z "$missing" ]]; then
+    printf "  ${RED}✗${RESET} install          could not read ecc.js status (exit %s)\n" "$rc"
+    issues=$((issues+1))
+  elif [[ "$missing" == "0" ]]; then
     printf "  ${GREEN}✓${RESET} install          ${DIM}%s${RESET}\n" "$instln"
   else
     printf "  ${RED}✗${RESET} install          %s\n" "$instln"
@@ -677,9 +682,12 @@ cmd_status() {
     issues=$((issues+1))
   fi
 
-  local df
-  df=$(node "$ECC_JS" diff 2>/dev/null)
-  if printf '%s\n' "$df" | grep -q "No upstream changes"; then
+  local df dfrc=0
+  df=$(node "$ECC_JS" diff 2>&1) || dfrc=$?
+  if [[ $dfrc -ne 0 ]]; then
+    printf "  ${YELLOW}⚠${RESET} sync             could not read ecc.js diff (exit %s)\n" "$dfrc"
+    warns=$((warns+1))
+  elif printf '%s\n' "$df" | grep -q "No upstream changes"; then
     printf "  ${GREEN}✓${RESET} sync             tracked files up to date\n"
   elif printf '%s\n' "$df" | grep -qE '[0-9]+ file\(s\) changed'; then
     printf "  ${YELLOW}⚠${RESET} sync             %s ${DIM}(myclaude sync)${RESET}\n" \

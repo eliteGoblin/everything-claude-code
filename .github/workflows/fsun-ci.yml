@@ -59,4 +59,6 @@ jobs:
           '
 
       - name: Markdownlint — fsun_config docs & custom rules
-        run: npx --yes markdownlint-cli 'fsun_config/**/*.md' --ignore node_modules
+        # Pinned to the repo's devDependency range (package.json: ^0.48.0)
+        # so this gate stays deterministic and reproducible.
+        run: npx --yes markdownlint-cli@0.48.0 'fsun_config/**/*.md' --ignore node_modules
