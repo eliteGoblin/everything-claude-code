@@ -241,6 +241,13 @@ ART
 # _kind_files <kind> <name> → list matching .md files (dir | file | name.md)
 _kind_files() {
   local root="$CLAUDE_HOME/$1" name="$2"
+  # Security: a rule group / skill name is a single path segment. Reject
+  # anything that could traverse out of $root (../, slashes, ~, leading
+  # dash) so `myclaude chat ../../.ssh/id_rsa` can't inline arbitrary
+  # local files into a prompt. (Copilot review, PR #3.)
+  case "$name" in
+    ""|.|..|*..*|*/*|"~"*|-*) return 1 ;;
+  esac
   if   [[ -d "$root/$name"    ]]; then find "$root/$name" -name '*.md' -type f | sort
   elif [[ -f "$root/$name"    ]]; then echo "$root/$name"
   elif [[ -f "$root/$name.md" ]]; then echo "$root/$name.md"
