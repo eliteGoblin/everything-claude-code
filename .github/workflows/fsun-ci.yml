@@ -45,11 +45,18 @@ jobs:
       - name: manifest.json is valid JSON
         run: node -e "JSON.parse(require('fs').readFileSync('fsun_config/manifest.json','utf8'))"
 
-      - name: ecc.js manifest integrity (no missing tracked files)
+      - name: Manifest source integrity (every tracked path exists at its source)
         run: |
-          out="$(node fsun_config/ecc.js status 2>&1)"
-          echo "$out"
-          echo "$out" | grep -qE '0 missing' || { echo "::error::tracked files missing from manifest source"; exit 1; }
+          node -e '
+            const fs = require("fs"), p = require("path");
+            const m = JSON.parse(fs.readFileSync("fsun_config/manifest.json", "utf8"));
+            const bad = [];
+            for (const f of m.upstream || []) if (!fs.existsSync(f)) bad.push("upstream: " + f);
+            for (const f of m.custom || []) if (!fs.existsSync(p.join("fsun_config/custom", f))) bad.push("custom: " + f);
+            // bible[] sources live in ~/claude-bible (not in repo) — not checkable in CI; skip.
+            if (bad.length) { console.error("Missing manifest sources:\n" + bad.join("\n")); process.exit(1); }
+            console.log("manifest integrity OK: " + (m.upstream||[]).length + " upstream + " + (m.custom||[]).length + " custom sources present (" + (m.bible||[]).length + " bible skipped)");
+          '
 
       - name: Markdownlint — fsun_config docs & custom rules
         run: npx --yes markdownlint-cli 'fsun_config/**/*.md' --ignore node_modules
