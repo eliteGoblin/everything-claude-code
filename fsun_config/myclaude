@@ -702,12 +702,25 @@ $(cat "$f")"
   else
     # Concierge: full-setup context, ask anything.
     label="whole setup"
-    local inv
+    # set -euo pipefail safe: missing ~/.claude subdirs (or pipefail on a
+    # failed `ls`) must yield empty inventory, never abort `chat`. Each
+    # listing is guarded by [[ -d ]] and terminated with `|| true`.
+    local inv rules_inv="" d
+    if [[ -d "$CLAUDE_HOME/rules" ]]; then
+      for d in "$CLAUDE_HOME"/rules/*/; do
+        [[ -d "$d" ]] || continue
+        rules_inv+="  $(basename "$d")/ ($(find "$d" -name '*.md' -type f 2>/dev/null | wc -l | tr -d ' ' || true))
+"
+      done
+    fi
+    local skills_inv agents_inv commands_inv
+    skills_inv="$( { [[ -d "$CLAUDE_HOME/skills" ]] && ls -1 "$CLAUDE_HOME/skills" 2>/dev/null | tr '\n' ' '; } || true )"
+    agents_inv="$( { [[ -d "$CLAUDE_HOME/agents" ]] && ls -1 "$CLAUDE_HOME/agents" 2>/dev/null | sed 's/\.md$//' | tr '\n' ' '; } || true )"
+    commands_inv="$( { [[ -d "$CLAUDE_HOME/commands" ]] && ls -1 "$CLAUDE_HOME/commands" 2>/dev/null | sed 's/\.md$//' | tr '\n' ' '; } || true )"
     inv="RULES (always-on, ~/.claude/rules/):
-$(for d in "$CLAUDE_HOME"/rules/*/; do [[ -d "$d" ]] && printf '  %s/ (%s)\n' "$(basename "$d")" "$(find "$d" -name '*.md' -type f | wc -l | tr -d ' ')"; done 2>/dev/null)
-SKILLS (~/.claude/skills/): $(ls -1 "$CLAUDE_HOME"/skills 2>/dev/null | tr '\n' ' ')
-AGENTS (~/.claude/agents/): $(ls -1 "$CLAUDE_HOME"/agents 2>/dev/null | sed 's/\.md$//' | tr '\n' ' ')
-COMMANDS (~/.claude/commands/): $(ls -1 "$CLAUDE_HOME"/commands 2>/dev/null | sed 's/\.md$//' | tr '\n' ' ')"
+${rules_inv}SKILLS (~/.claude/skills/): $skills_inv
+AGENTS (~/.claude/agents/): $agents_inv
+COMMANDS (~/.claude/commands/): $commands_inv"
     sys="You are the user's Claude Code CONFIG CONCIERGE. Help them understand and manage their setup. Answer ANY question about it (not one topic). You are running inside the ECC repo at $ECC_ROOT with file access — read any file to answer specifics (rules: $CLAUDE_HOME/rules/<g>/ or repo rules/<g>/ ; custom: fsun_config/custom/ ; skills: $CLAUDE_HOME/skills/). For changes, give exact edits and note custom files need 'myclaude sync'. Key facts:
 
 - ECC fork repo: $ECC_ROOT  → installs to $CLAUDE_HOME via fsun_config/ecc.js (managed by the 'myclaude' CLI).
