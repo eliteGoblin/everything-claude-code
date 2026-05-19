@@ -98,6 +98,7 @@
     "rules/common/session-log.md",
     "rules/frank/pr-workflow.md",
     "rules/frank/preferences.md",
+    "rules/frank/production-safety.md",
     "scripts/lib/session-manager-fsun.js",
     "skills/karpathy-guidelines/SKILL.md"
   ],
@@ -193,6 +194,6 @@
     "skills/security-review/SKILL.md": "2488fb9de701",
     "skills/security-review/cloud-infrastructure-security.md": "7d9a83852475"
   },
-  "lastSync": "2026-05-17T09:43:06.510Z",
+  "lastSync": "2026-05-19T23:31:29.595Z",
   "bible": []
 }
