@@ -106,7 +106,8 @@
     "rules/frank/preferences.md",
     "rules/frank/production-safety.md",
     "scripts/lib/session-manager-fsun.js",
-    "skills/karpathy-guidelines/SKILL.md"
+    "skills/karpathy-guidelines/SKILL.md",
+    "skills/observability-buildout/SKILL.md"
   ],
   "hashes": {
     "agents/architect.md": "36e782e21364",
