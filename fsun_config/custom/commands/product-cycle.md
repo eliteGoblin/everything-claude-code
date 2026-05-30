@@ -42,8 +42,26 @@ Run the spec's acceptance criteria as real tests against actual behavior. The e2
 ### Stage 6 - CLOSE  (agent: ba-curator, verb: release-review after ship)
 Once merged/released: `ba-curator` flips status to shipped, updates the version table + honest-limitations, and confirms the feature spec matches what actually shipped.
 
+## Decision altitude - what to gate vs what to decide (READ THIS)
+The single most important judgment in the cycle: which decisions are yours (act as a trusted tech lead) and which MUST go back to the human.
+
+DECIDE AUTONOMOUSLY (you are the tech lead the user trusts):
+- Implementation details: file permissions, env handling, where a temp file lives, code structure, error wording, which helper to extract.
+- Test design, refactors that preserve behavior, review-fix application.
+- Anything reversible and below the feature/architecture line.
+
+CHECK WITH THE HUMAN (always a gate):
+- Architecture changes - how a major component is structured or how many of them there are.
+- Key feature decisions - what the product does or stops doing, scope in/out.
+- Anything that reverses an accepted ADR or tensions with philosophy.
+- A security/threat-model tradeoff (e.g. weakening a disguise to make something work).
+
+Canonical example: **consolidating two daemons into one (dual-mesh -> single-mesh) is a KEY architecture decision - gate it.** That class of change (merging components, changing the core model, flipping how a major piece works) is never decided alone, even when it seems obviously right. By contrast, "what file permission bits let the dropped user exec the binary" is an implementation detail - just do it.
+
+Note: with an AI dev loop most code is quickly reversible via git, so "hard to revert" is judged by architectural/product SIGNIFICANCE, not literal revert difficulty. When unsure which side of the line a decision is on, treat it as a gate and ask - a 30-second check beats the user catching up to a shipped surprise later.
+
 ## Human-gate discipline
-The cycle is NOT fire-and-forget. Run a stage, report the result, STOP at each HUMAN GATE, and wait for the user to say continue. The only gates are: (1) direction approval, (2) major behavior/product conflict, plus any ADR reversal. Everything else (code-review fixes, test additions, minor doc tweaks) proceeds without interrupting the user.
+The cycle is NOT fire-and-forget. Run a stage, report the result, STOP at each HUMAN GATE, and wait for the user to say continue. The gates are: (1) direction approval at DEFINE, (2) any architecture / key-feature / threat-model decision (per "Decision altitude" above), (3) major behavior/product conflict at VERIFY, plus any ADR reversal. Everything else (code-review fixes, test additions, implementation details, minor doc tweaks) proceeds without interrupting the user.
 
 ## Everything via PR
 Code changes go through the project's PR workflow (branch -> PR -> reviewers -> CI green -> merge). Config/agent changes go through the config repo's PR workflow. Never push directly to a shared branch.
