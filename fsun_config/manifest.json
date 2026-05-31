@@ -92,7 +92,9 @@
     "skills/verification-loop/SKILL.md"
   ],
   "custom": [
+    "agents/ba-curator.md",
     "commands/done.md",
+    "commands/product-cycle.md",
     "commands/sessions.md",
     "rules/common/behavioral-guidelines.md",
     "rules/common/session-log.md",
