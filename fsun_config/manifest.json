@@ -98,7 +98,9 @@
     "skills/verification-loop/SKILL.md"
   ],
   "custom": [
+    "agents/ba-curator.md",
     "commands/done.md",
+    "commands/product-cycle.md",
     "commands/sessions.md",
     "rules/common/behavioral-guidelines.md",
     "rules/common/session-log.md",
@@ -106,6 +108,7 @@
     "rules/frank/preferences.md",
     "rules/frank/production-safety.md",
     "scripts/lib/session-manager-fsun.js",
+    "skills/focusd-protection/SKILL.md",
     "skills/karpathy-guidelines/SKILL.md",
     "skills/observability-buildout/SKILL.md"
   ],
@@ -207,6 +210,6 @@
     "skills/plan-orchestrate/SKILL.md": "226ec75b26f3",
     "skills/safety-guard/SKILL.md": "50328f1aada5"
   },
-  "lastSync": "2026-05-20T01:55:51.470Z",
+  "lastSync": "2026-05-26T06:02:05.333Z",
   "bible": []
 }
