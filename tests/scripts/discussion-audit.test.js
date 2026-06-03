@@ -9,7 +9,10 @@ const path = require('path');
 const { execFileSync, spawnSync } = require('child_process');
 
 const SCRIPT = path.join(__dirname, '..', '..', 'scripts', 'discussion-audit.js');
-const { DISCUSSION_QUERY } = require(path.join(__dirname, '..', '..', 'scripts', 'lib', 'github-discussions'));
+const {
+  DISCUSSION_ENABLED_QUERY,
+  DISCUSSION_QUERY
+} = require(path.join(__dirname, '..', '..', 'scripts', 'lib', 'github-discussions'));
 
 function createTempDir(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -21,6 +24,10 @@ function cleanup(dirPath) {
 
 function discussionGhKey(owner, name, first = 100) {
   return `api graphql -f owner=${owner} -f name=${name} -F first=${first} -f query=${DISCUSSION_QUERY}`;
+}
+
+function discussionEnabledGhKey(owner, name) {
+  return `api graphql -f owner=${owner} -f name=${name} -f query=${DISCUSSION_ENABLED_QUERY}`;
 }
 
 function writeGhShim(rootDir, responses) {
@@ -95,7 +102,10 @@ function runTests() {
 
     try {
       const shimPath = writeGhShim(rootDir, {
-        [discussionGhKey('affaan-m', 'everything-claude-code')]: {
+        [discussionEnabledGhKey('affaan-m', 'ECC')]: {
+          data: { repository: { hasDiscussionsEnabled: true } }
+        },
+        [discussionGhKey('affaan-m', 'ECC')]: {
           data: {
             repository: {
               hasDiscussionsEnabled: true,
@@ -132,7 +142,7 @@ function runTests() {
       const parsed = JSON.parse(run([
         '--json',
         '--repo',
-        'affaan-m/everything-claude-code'
+        'affaan-m/ECC'
       ], {
         cwd: rootDir,
         env: {
@@ -155,7 +165,10 @@ function runTests() {
 
     try {
       const shimPath = writeGhShim(rootDir, {
-        [discussionGhKey('affaan-m', 'everything-claude-code')]: {
+        [discussionEnabledGhKey('affaan-m', 'ECC')]: {
+          data: { repository: { hasDiscussionsEnabled: true } }
+        },
+        [discussionGhKey('affaan-m', 'ECC')]: {
           data: {
             repository: {
               hasDiscussionsEnabled: true,
@@ -182,7 +195,7 @@ function runTests() {
       const result = runProcess([
         '--json',
         '--repo',
-        'affaan-m/everything-claude-code',
+        'affaan-m/ECC',
         '--exit-code'
       ], {
         cwd: rootDir,
@@ -207,7 +220,10 @@ function runTests() {
 
     try {
       const shimPath = writeGhShim(rootDir, {
-        [discussionGhKey('affaan-m', 'everything-claude-code')]: {
+        [discussionEnabledGhKey('affaan-m', 'ECC')]: {
+          data: { repository: { hasDiscussionsEnabled: true } }
+        },
+        [discussionGhKey('affaan-m', 'ECC')]: {
           data: {
             repository: {
               hasDiscussionsEnabled: true,
@@ -221,7 +237,7 @@ function runTests() {
         '--write',
         outputPath,
         '--repo',
-        'affaan-m/everything-claude-code'
+        'affaan-m/ECC'
       ], {
         cwd: rootDir,
         env: { ECC_GH_SHIM: shimPath }
@@ -232,6 +248,34 @@ function runTests() {
       assert.ok(written.includes('# ECC Discussion Audit'));
       assert.ok(written.includes('Answerable discussions missing accepted answer'));
       assert.ok(written.includes('- none'));
+    } finally {
+      cleanup(rootDir);
+    }
+  })) passed++; else failed++;
+
+  if (test('passes without heavy query when discussions are disabled', () => {
+    const rootDir = createTempDir('discussion-audit-disabled-');
+
+    try {
+      const shimPath = writeGhShim(rootDir, {
+        [discussionEnabledGhKey('ECC-Tools', 'ECC-website')]: {
+          data: { repository: { hasDiscussionsEnabled: false } }
+        }
+      });
+
+      const parsed = JSON.parse(run([
+        '--json',
+        '--repo',
+        'ECC-Tools/ECC-website'
+      ], {
+        cwd: rootDir,
+        env: { ECC_GH_SHIM: shimPath }
+      }));
+
+      assert.strictEqual(parsed.ready, true);
+      assert.strictEqual(parsed.repos[0].discussions.enabled, false);
+      assert.strictEqual(parsed.totals.totalDiscussions, 0);
+      assert.strictEqual(parsed.totals.errors, 0);
     } finally {
       cleanup(rootDir);
     }
