@@ -365,7 +365,7 @@ function renderLoadOutput(result) {
   out.push('## Native Transcript History');
   out.push(`Budget: ${result.budget.tokens.toLocaleString()} tokens (${result.budget.chars.toLocaleString()} chars)`);
   if (result.topic) out.push(`Topic filter: "${result.topic}"`);
-  if (h.warning) out.push(`⚠️  ${h.warning}`);
+  if (h.warning) out.push(`[!] ${h.warning}`);
   out.push(`Included: ${h.transcripts.length}, skipped (over budget): ${h.skipped}`);
   out.push(`Used: ${h.tokensUsed.toLocaleString()} tokens (${h.charsUsed.toLocaleString()} chars)`);
   out.push('');
