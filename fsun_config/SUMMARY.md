@@ -153,22 +153,22 @@ Markdown files in `~/.claude/skills/*/SKILL.md`. Loaded when Claude detects rele
 
 ```bash
 # 1. Check rules are loaded — start a new Claude Code session and ask:
-#    "what rules are you following?"
-#    Claude should mention coding style, testing, TypeScript patterns, etc.
+# "what rules are you following?"
+# Claude should mention coding style, testing, TypeScript patterns, etc.
 
 # 2. Test slash commands — type / and check autocomplete:
-#    /tdd          — should show TDD workflow
-#    /build-fix    — should show build fix workflow
-#    /code-review  — should show review workflow
-#    /plan         — should show planning workflow
+# /tdd          — should show TDD workflow
+# /build-fix    — should show build fix workflow
+# /code-review  — should show review workflow
+# /plan         — should show planning workflow
 
 # 3. Test an agent — ask Claude to review a file:
-#    "review this file for issues"
-#    Should invoke typescript-reviewer or code-reviewer agent
+# "review this file for issues"
+# Should invoke typescript-reviewer or code-reviewer agent
 
 # 4. Test a skill — write some code and see if Claude follows patterns:
-#    "create a REST API endpoint"
-#    Should follow api-design and backend-patterns skill conventions
+# "create a REST API endpoint"
+# Should follow api-design and backend-patterns skill conventions
 
 # 5. Verify file counts match expectations:
 find ~/.claude/rules -type f | wc -l      # expect: 23
