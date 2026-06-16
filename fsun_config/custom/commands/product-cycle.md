@@ -32,8 +32,10 @@ Hand the approved spec to `architect` for the technical approach + risks. The ar
 ### Stage 3 - BUILD  (agents: dev via general-purpose or tdd-guide)
 Implement against the spec + design. Write unit + integration tests, and an e2e plan derived from the spec's acceptance criteria. Prefer an isolated worktree if the build is large. TDD where it fits.
 
-### Stage 4 - REVIEW  (agents: code-reviewer + language reviewer + security-reviewer, in parallel)
+### Stage 4 - REVIEW  (agents: code-reviewer + language reviewer + security-reviewer, in parallel — AND GitHub Copilot on the PR)
 Run the relevant reviewers concurrently on the diff. Collect findings, dispatch fixes back to the build agent. This stage has NO human gate - review-and-fix is routine. Loop until reviewers are satisfied (CRITICAL/HIGH cleared).
+
+**Copilot review on the PR is MANDATORY before merge** (mirrors the always-on PR workflow). Once the PR is open and the local reviewers are clear: **request a GitHub Copilot review on the PR, WAIT for it to post, then address EVERY Copilot comment** — either fix it (push the fix + reply `Fixed` on that thread) or rebut it (reply with a specific, reasoned why-not). No Copilot comment may be left unaddressed. "Code review" for this cycle = the local specialist agents **and** Copilot; both must be satisfied. Do NOT merge with unresolved Copilot comments or red CI.
 
 ### Stage 5 - VERIFY  (agent: e2e-runner)
 Run the spec's acceptance criteria as real tests against actual behavior. The e2e agent reads `requirements/features/<this-feature>.md` as its contract.
@@ -64,7 +66,7 @@ Note: with an AI dev loop most code is quickly reversible via git, so "hard to r
 The cycle is NOT fire-and-forget. Run a stage, report the result, STOP at each HUMAN GATE, and wait for the user to say continue. The gates are: (1) direction approval at DEFINE, (2) any architecture / key-feature / threat-model decision (per "Decision altitude" above), (3) major behavior/product conflict at VERIFY, plus any ADR reversal. Everything else (code-review fixes, test additions, implementation details, minor doc tweaks) proceeds without interrupting the user.
 
 ## Everything via PR
-Code changes go through the project's PR workflow (branch -> PR -> reviewers -> CI green -> merge). Config/agent changes go through the config repo's PR workflow. Never push directly to a shared branch.
+Code changes go through the project's PR workflow: branch -> PR -> local reviewers -> **request GitHub Copilot review -> resolve EVERY Copilot comment (fix + reply `Fixed`, or a reasoned rebuttal reply)** -> CI green -> merge. **Never merge a PR with unaddressed Copilot comments or red/pending CI.** Config/agent changes go through the config repo's PR workflow (same Copilot + CI gate). Never push directly to a shared branch.
 
 ## Output between stages
 After each stage, give the user a 3-5 line status: which stage finished, what the agent produced, whether the next step is a gate (needs them) or routine (proceeds automatically).
