@@ -38,7 +38,7 @@ Run the relevant reviewers concurrently on the diff. Collect findings, dispatch 
 **Copilot review on the PR is MANDATORY before merge** (mirrors the always-on PR workflow). Once the PR is open and the local reviewers are clear: **request a GitHub Copilot review, WAIT for it to post, address EVERY comment** — fix it (push + reply `Fixed`) or rebut it (reasoned why-not) — **and mark each thread RESOLVED** (a reply alone does NOT resolve a line-level thread on GitHub). "Code review" for this cycle = the local specialist agents **and** Copilot; both must be satisfied. Do NOT merge with any unresolved Copilot thread or red CI. The exact commands are in **[Copilot review — exact commands](#copilot-review--exact-commands)** below.
 
 ### Stage 5 - VERIFY  (agent: e2e-verifier — owns the verify report)
-Dispatch `e2e-verifier` (the web-frontend `e2e-runner` is for browser UIs; use it only for web work). It reads the feature's acceptance criteria **and** any project verification contract (e.g. `requirements/e2e-verification.md` / a vital-features list) and **exercises the real behaviour**, then **emits the release verify report** — the gate before CLOSE.
+Dispatch `e2e-verifier` (the web-frontend `e2e-runner` is for browser UIs; use it only for web work). It reads the feature's acceptance criteria **and** any project verification contract (e.g. `requirements/e2e-verification.md` / a vital-features list) and **exercises the real behavior**, then **emits the release verify report** — the gate before CLOSE.
 
 Non-negotiable rules the verifier enforces (mirror these when you read its report):
 - **Verified means EXERCISED.** Every item is `VERIFIED` (the real path was run + observed) or `NOT VERIFIED` (say why + hand the exact steps to the human). No third state, no guessing, no "green status ⇒ it works". The user has been burned by claimed-but-unverified results — do not repeat it.
@@ -46,7 +46,7 @@ Non-negotiable rules the verifier enforces (mirror these when you read its repor
 - **Process accuracy — nothing more, nothing less.** Confirm the running set is exactly expected; rotations/updates leave **no orphaned old-version processes or binaries**; verify each is current + legitimately signed/checksummed. An orphan is a FAIL to investigate, not noise.
 - **Honest report up front.** `NOT VERIFIED` items go at the TOP of the report and are handed to the human to run. Verdict is `PASS` only when the whole contract was exercised.
 
-Routing: if behaviour does NOT match the documented contract, route to `ba-curator` — minor (doc was slightly off → update + note) vs major (the product doesn't do what was promised → **HUMAN GATE 2**). A `PASS-WITH-GAPS` / `FAIL` verdict, or any vital recovery/process-accuracy check left NOT VERIFIED, blocks CLOSE until the human signs off.
+Routing: if behavior does NOT match the documented contract, route to `ba-curator` — minor (doc was slightly off → update + note) vs major (the product doesn't do what was promised → **HUMAN GATE 2**). A `PASS-WITH-GAPS` / `FAIL` verdict, or any vital recovery/process-accuracy check left NOT VERIFIED, blocks CLOSE until the human signs off.
 
 ### Stage 6 - CLOSE  (agent: ba-curator, verb: release-review after ship)
 Once merged/released: `ba-curator` flips status to shipped, updates the version table + honest-limitations, and confirms the feature spec matches what actually shipped.
