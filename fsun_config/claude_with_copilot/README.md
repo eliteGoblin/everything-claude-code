@@ -112,3 +112,4 @@ reachable from the one `myclaude` entrypoint.
 | `401 Bad credentials` | token invalid / revoked | `myclaude copilot login` again |
 | `403 ... enterprise has an IP allow list` | account is in a corp enterprise | use the allow-listed network/VPN, or a personal Copilot account |
 | `404 Not Found` on token exchange | account has no Copilot seat | subscribe to Copilot, or log in with the account that has it |
+| malformed JSON / `invalid bearer token` | a value wrapped onto a second line in settings.json (a raw newline inside a `"..."` string) | keep every value on ONE line. The generated config omits `ANTHROPIC_CUSTOM_HEADERS` (the Node CLI ignores it anyway) precisely to avoid this footgun |

@@ -214,7 +214,9 @@ cfg={
     "ANTHROPIC_DEFAULT_OPUS_MODEL":os.environ["OPUS"],
     "ANTHROPIC_DEFAULT_HAIKU_MODEL":os.environ["HAIKU"],
     "CLAUDE_CODE_SUBAGENT_MODEL":os.environ["HAIKU"],
-    "ANTHROPIC_CUSTOM_HEADERS":"Copilot-Integration-Id: vscode-chat\nEditor-Version: vscode/1.109.3\nEditor-Plugin-Version: copilot-chat/0.37.6\nUser-Agent: GitHubCopilotChat/0.37.6",
+    # No ANTHROPIC_CUSTOM_HEADERS: the Node CLI (<=2.1.112) hardcodes its own
+    # Copilot-Integration-Id and ignores it, and a multi-line header value is a
+    # JSON footgun (a wrapped \n breaks the file). Verified to work without it.
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC":"1",
     "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS":"1",
     "CLAUDE_CODE_MAX_OUTPUT_TOKENS":"64000"

@@ -70,7 +70,6 @@ Nothing in the config changed. **Two independent, external things did:**
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4.5",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4.7",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5",
-    "ANTHROPIC_CUSTOM_HEADERS": "Copilot-Integration-Id: vscode-chat\nEditor-Version: vscode/1.109.3\nEditor-Plugin-Version: copilot-chat/0.37.6",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "64000"
   },
