@@ -11,8 +11,8 @@ GitHub Copilot Pro+ account (`eliteGoblin`).
 | Why 2.1.112 | `2.1.113+` ship a **native glibc binary** (`bin/claude.exe`), not JS. If you can't run native binaries, 2.1.112 is the ceiling. |
 | Endpoint | `ANTHROPIC_BASE_URL = https://api.githubcopilot.com` |
 | Auth | `ANTHROPIC_AUTH_TOKEN = <GitHub Copilot token>` (device-login, long-lived) |
-| Sonnet (main) | `claude-sonnet-4.5` ✅ verified (`Paris`) |
-| Opus | `claude-opus-4.7` ✅ verified (`42`) — **requires thinking OFF** |
+| Sonnet (main) | `claude-sonnet-4.5` — verified (`Paris`) |
+| Opus | `claude-opus-4.7` — verified (`42`) — **requires thinking OFF** |
 | Thinking | set `alwaysThinkingEnabled: false` (or `/config` → thinking off) — else opus 400s on `thinking.type.enabled` |
 
 ## Root cause of "it broke today, config unchanged"
@@ -53,11 +53,11 @@ Nothing in the config changed. **Two independent, external things did:**
 
 | Model id | Result |
 |----------|--------|
-| `claude-sonnet-4.5` | ✅ WORKS (recommended main) |
-| `claude-sonnet-4-5` | ✅ WORKS |
-| `claude-sonnet-4-6` | ✅ now (was failing — volatile, don't rely on it) |
-| `claude-opus-4.7` | ✅ WORKS with thinking OFF |
-| `claude-opus-4.5`, `claude-opus-4.8`, `claude-sonnet-4.6` | ❌ |
+| `claude-sonnet-4.5` | WORKS (recommended main) |
+| `claude-sonnet-4-5` | WORKS |
+| `claude-sonnet-4-6` | now (was failing — volatile, don't rely on it) |
+| `claude-opus-4.7` | WORKS with thinking OFF |
+| `claude-opus-4.5`, `claude-opus-4.8`, `claude-sonnet-4.6` | not available |
 
 ## The settings.json (drop into `~/.claude/settings.json`)
 
