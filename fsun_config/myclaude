@@ -217,6 +217,10 @@ ART
   printf "    ${GREEN}myclaude counts${RESET}        ${DIM}→ file counts${RESET}\n"
   printf "    ${GREEN}myclaude mcp${RESET}    ${DIM}[name]${RESET} ${DIM}→ MCP setup recipes (context for Claude)${RESET}\n"
   printf "\n"
+  subhead "GitHub Copilot models (use Copilot's Claude from this CLI):"
+  printf "    ${GREEN}myclaude copilot${RESET} ${DIM}login|models|verify|config|install|all${RESET}\n"
+  printf "        ${DIM}mint a long-lived token · see which model ids work · write settings.json${RESET}\n"
+  printf "\n"
   subhead "Bootstrap (new machine):"
   printf "    ${GREEN}myclaude install${RESET}        ${DIM}→ full bootstrap: prereqs, sync, link${RESET}\n"
   printf "    ${GREEN}myclaude install --opus${RESET} ${DIM}→ same + upgrade all agents to opus${RESET}\n"
@@ -747,6 +751,44 @@ $inv"
   exec claude "${cargs[@]}" "$initial"
 }
 
+# ─── copilot: use GitHub Copilot-hosted Claude models from Claude Code ─
+# Lets `claude` talk to GitHub Copilot's Claude models via your Copilot seat.
+# Heavy logic lives in claude_with_copilot/copilot-claude.sh (mint a long-lived
+# token, list/verify which model id strings actually work, emit settings.json),
+# kept external so this file stays lean. Reachable from the one `myclaude` entrypoint.
+COPILOT_HELPER="$SCRIPT_DIR/claude_with_copilot/copilot-claude.sh"
+cmd_copilot() {
+  if [[ ! -f "$COPILOT_HELPER" ]]; then
+    printf "${RED}Error:${RESET} helper not found: %s\n" "$COPILOT_HELPER"; return 1
+  fi
+  local sub="${1:-help}"
+  case "$sub" in
+    login|models|verify|config|all)
+      bash "$COPILOT_HELPER" "$@" ;;
+    install)
+      # Generate config straight into ~/.claude/settings.json (backs up first).
+      local out="$CLAUDE_HOME/settings.json"
+      if [[ -f "$out" ]]; then
+        cp "$out" "$out.bak.$(date +%s)"
+        printf "${DIM}backed up existing settings.json${RESET}\n"
+      fi
+      bash "$COPILOT_HELPER" config "$out" && printf "${GREEN}Wrote${RESET} %s\n" "$out" ;;
+    help|-h|--help|"")
+      header "COPILOT  (use GitHub Copilot's Claude models from Claude Code)"
+      printf "    ${GREEN}myclaude copilot login${RESET}      ${DIM}→ device flow, mint a long-lived (non-expiring) token${RESET}\n"
+      printf "    ${GREEN}myclaude copilot models${RESET}     ${DIM}→ list models + the exact id string that actually works${RESET}\n"
+      printf "    ${GREEN}myclaude copilot verify${RESET} ${DIM}[m]  → send a real test message to a model (proof)${RESET}\n"
+      printf "    ${GREEN}myclaude copilot config${RESET} ${DIM}[f]  → write a settings.json (default ./settings.json)${RESET}\n"
+      printf "    ${GREEN}myclaude copilot install${RESET}    ${DIM}→ write straight into ~/.claude/settings.json (backs up)${RESET}\n"
+      printf "    ${GREEN}myclaude copilot all${RESET}        ${DIM}→ login → models → verify → config in one shot${RESET}\n"
+      printf "\n  ${DIM}Token is reused from \$COPILOT_TOKEN or ~/.config/copilot-claude/token${RESET}\n"
+      printf "  ${DIM}Docs: ${RESET}fsun_config/claude_with_copilot/README.md\n\n" ;;
+    *)
+      printf "${RED}Unknown copilot subcommand:${RESET} %s ${DIM}(login|models|verify|config|install|all)${RESET}\n" "$sub"
+      return 1 ;;
+  esac
+}
+
 # ─── delegates to ecc.js ────────────────────────────────────────────
 delegate() {
   if [[ ! -f "$ECC_JS" ]]; then
@@ -859,6 +901,9 @@ case "$cmd" in
     ;;
   chat)
     cmd_chat "$@"
+    ;;
+  copilot)
+    cmd_copilot "$@"
     ;;
   status)
     cmd_status
