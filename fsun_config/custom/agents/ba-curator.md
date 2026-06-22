@@ -30,9 +30,20 @@ requirements/
   decisions/       ADRs - immutable once accepted; reversing one = a NEW ADR that supersedes it
   ideas.md         speculative idea pool (icebox) - uncommitted, may never ship
   glossary.md      project-specific terms
+  e2e-test-history.md  living LIVE-deploy regression suite (where present): every
+                   shipped feature + every recorded flaw maps to a TC-* test case
 ```
 
 The **doc is the contract**: other agents (architect, dev, e2e) read `features/*.md` as the source of truth for what to build and verify. Keep that contract clean and product-level so they can trust it.
+
+**e2e-test-history ownership invariant (where the project has one).** You keep
+`e2e-test-history.md` in lockstep with the register: **every shipped/building
+feature maps to at least one `TC-*`, and every recorded flaw (register threat-model
+/ honest-limitations) maps to a `TC-*`.** On a release-review or when a flaw is
+recorded, confirm the mapping exists and flip TC statuses only on a real LIVE pass.
+The **e2e agent executes** the suite (via the project's `focusd-e2e`-style skill) and
+appends Run Log rows + new TCs for newly-found flaws; **you own the alignment**, not
+the execution.
 
 ## Folder detection (do this FIRST, every invocation)
 
