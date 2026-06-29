@@ -45,6 +45,22 @@ The **e2e agent executes** the suite (via the project's `focusd-e2e`-style skill
 appends Run Log rows + new TCs for newly-found flaws; **you own the alignment**, not
 the execution.
 
+**Per-release verification record (you are the gate + scribe).** The e2e agent
+hands you a per-release FACTS-ONLY report (working / not-working / not-tested,
+each with a key-moment redacted EXCERPT + a reproducible step or `scripts/e2e/`
+script ref). You **review and accept (or reject) it**, then check it into
+`e2e-test-history.md`:
+- a **Run-Log row for the release** (which TCs ran, PASS/FAIL/NOT-TESTED);
+- each TC's **status**, its **repro step/script reference**, and the **key-moment
+  excerpt** that proves the criterion (keep excerpts short + redacted);
+- the **feature ↔ release ↔ evidence** link in the register/version table.
+Do NOT mark a feature done/shipped on the e2e agent's say-so alone — accept the
+record only when each acceptance item is WORKING-with-evidence or explicitly
+NOT-TESTED with a reason. A NOT-WORKING item stays an open TC (+ its bug ticket).
+This is the durable context: a later session reads one doc and sees what shipped,
+how it was verified, and how to re-run it. Separation of duties: e2e tests +
+captures, you gate + record.
+
 ## Folder detection (do this FIRST, every invocation)
 
 1. Look for an existing doc root: prefer `documents/`, else `docs/` - **whichever already exists. NEVER create both.** If neither exists, default to `documents/`.

@@ -137,6 +137,27 @@ Notes / risks:
 Keep it concise and concrete. Numbers and observations over adjectives. If the
 verdict is anything but PASS, make the gaps impossible to miss.
 
+## Per-release record + reusable, excerpt-backed evidence (you author; ba-curator checks in)
+For each release you verify, build a record that gives the next session/agent full context:
+- **Evidence = a key-moment EXCERPT, not just a count.** For each acceptance
+  criterion, capture a SHORT verbatim snippet of the actual output/log at the
+  moment that proves it — e.g. the recovery transition (`desired=none →
+  desired=vX → platform running`), the cleanup line (`retired N prior
+  generation(s)`), the leak check (`ps … grep mesh → 0`), the stable-status
+  reads. **Redact disguised tokens INSIDE the excerpt** (replace with `<redacted>`)
+  but keep the meaningful content. A bare count is weaker than the line that
+  produced it — include both.
+- **Reproducible steps for every TC.** Each TC's evidence includes the exact
+  command/script to regenerate it. For non-trivial tests (teardowns, recovery,
+  multi-step), save a **self-discovering** (no hardcoded disguised paths),
+  **redaction-safe** script under `scripts/e2e/` named by `TC-id`, so the next
+  release just re-runs it. Inline a one-liner for trivial checks.
+- **Hand the report to ba-curator** to review, accept, and check into the
+  e2e-test-history doc: a Run-Log row per release + each TC's status + the repro
+  step/script reference + the key-moment excerpt + the feature↔release↔evidence
+  link. You author + run + capture; **ba-curator gates + records** (separation of
+  duties). Don't self-accept — your report is input to the curator's review.
+
 ## File a bug ticket for each NOT WORKING finding (if it helps the dev)
 When you confirm a FAIL and the repo uses GitHub issues, open one with
 `gh issue create` so the dev agent has full context to fix it:
