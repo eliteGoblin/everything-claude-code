@@ -44,6 +44,30 @@ intermediate states. Never round them up to "done."
   the list. ba-curator doc is the source of the checklist; e2e-verifier is the
   one that ticks the boxes against reality.
 
+### Doc-driven verification (CRITICAL for long sessions)
+
+Long sessions lose context and drift into false "done" answers. Defense: a
+**single centralized source-of-truth doc, owned + maintained by ba-curator**
+(the requirements register + feature acceptance lists + e2e-test-history). Every
+agent verifies against THAT doc, not against memory or vibes — so no check step
+is silently skipped.
+
+- The **e2e-verifier** (and any verifying agent) reads the ba-curator doc as the
+  authoritative checklist and ticks each item against live behavior.
+- **Escalation chain when unsure** (never guess, never fabricate a green):
+  1. e2e/verifying agent unsure about an acceptance item → **consult the
+     ba-curator doc / ask the ba-curator agent**.
+  2. Still unsure (doc ambiguous or silent) → **ask the user (me)** — do not
+     invent an answer.
+- ba-curator keeps the doc in lockstep with reality (every shipped/building
+  feature ↔ a checklist item; every found flaw ↔ a test case). If verification
+  reveals the doc is wrong/stale, fix the doc first, then re-verify.
+- **Per cycle:** ba-curator states up front (DEFINE) exactly what must be done
+  this cycle — the deliverables + acceptance items. At VERIFY, e2e-verifier
+  goes through those items **one by one**, each ticked against live behavior.
+  The cycle is not done until every item is individually checked (or explicitly
+  surfaced as NOT-checked, with why).
+
 ## Code
 
 - Match the conventions of the surrounding code.
