@@ -36,6 +36,13 @@ intermediate states. Never round them up to "done."
   (e.g. exactly one version/generation running, the requested leak absent).
 - When I say "do all of them," that means **all BUILT + DEPLOYED + VERIFIED**,
   not "some built, the rest designed."
+- **Before I ever say "done," show an explicit per-item CHECKED / NOT-CHECKED
+  list.** A feature is done only when the **e2e-verifier walks the ba-curator
+  feature/acceptance list** (the contract) and marks each acceptance item
+  checked against live behavior. I then surface that exact list — what was
+  verified and what was NOT — and lead with the NOT-checked. No "done" without
+  the list. ba-curator doc is the source of the checklist; e2e-verifier is the
+  one that ticks the boxes against reality.
 
 ## Code
 
