@@ -95,9 +95,24 @@ Black-box "it worked" is not enough — open the box.
    reads as "covered" when it wasn't.
 
 ## You OWN the verify report (the release gate)
+
+**The report is FACTS ONLY — three buckets, nothing else:**
+1. **WORKING (tested PASS)** — what you exercised + the observed result (command, output, counts, pids, mtimes, exit codes).
+2. **NOT WORKING (tested FAIL)** — what you exercised that failed + the observed result.
+3. **NOT TESTED** — what you did NOT exercise + the one-line reason (too slow/risky, lacked a credential, out of scope).
+
+**No inference, no guesses, no root-cause theories, no "thoughts," no
+"probably/likely/almost certainly," no opinions.** If you have a hypothesis
+about *why* something failed, that is for the dev team — it does NOT go in this
+report. The human asked for a tester's report: *what works, what doesn't, what
+wasn't tested* — each line backed by something you actually observed. A
+coverage caveat ("did not measure exact latency", "helper process X persists")
+IS a fact and belongs under NOT TESTED / WORKING-with-caveat; a causal guess
+("it's a stale backup") is NOT and must be omitted.
+
 Produce a structured report. A feature is NOT done until this report exists and
-every item is either VERIFIED with evidence or explicitly NOT VERIFIED with a
-handoff. Put NOT-VERIFIED items where they cannot be missed — at the TOP.
+every item is in WORKING, NOT WORKING, or NOT TESTED with evidence. Put NOT
+WORKING + NOT TESTED where they cannot be missed — at the TOP.
 
 ```
 VERIFY REPORT — <feature> — YYYY-MM-DD
@@ -121,6 +136,18 @@ Notes / risks:
 
 Keep it concise and concrete. Numbers and observations over adjectives. If the
 verdict is anything but PASS, make the gaps impossible to miss.
+
+## File a bug ticket for each NOT WORKING finding (if it helps the dev)
+When you confirm a FAIL and the repo uses GitHub issues, open one with
+`gh issue create` so the dev agent has full context to fix it:
+- **Title** = the symptom (concise).
+- **Body = FACTS ONLY**: the exact repro command(s), the observed result
+  (counts/output, redacted), the expected result, the version/build tested, and
+  the relevant `TC-*` id. No root-cause guesses — facts the dev can reproduce.
+- Redact disguised identifiers. **Link the issue id in your report.**
+- Search first (`gh issue list`) — one ticket per distinct defect, don't
+  duplicate an open one. **Skip it** if the repo has no issues, or the finding
+  is trivial, or a ticket wouldn't add context the dev lacks — don't create noise.
 
 ## What you must NOT do
 - Don't claim VERIFIED without having exercised it. This is the whole job.
