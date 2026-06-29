@@ -17,6 +17,57 @@
   `upstream` (ECC fork), `bible` (~/claude-bible skills), `custom` (this dir).
 - Keep my fork rebased on `upstream/main`; my commits stay isolated in `fsun_config/`.
 
+## Definition of Done (CRITICAL — overrides any optimistic phrasing)
+
+A user-reported issue is **DONE only when its exact reproduction is re-run and
+shown gone.** Designed / built / merged / deployed are **NOT done** — they are
+intermediate states. Never round them up to "done."
+
+- **Track every original issue I report to closure**, each with its verify
+  command (e.g. issue "`ps aux | grep mesh` finds the daemon" → not done until
+  `ps aux | grep mesh` returns nothing against the live mesh).
+- **Status reports must list each of my original issues as `VERIFIED-GONE` vs
+  `OPEN`** — and **lead with what's still OPEN**. No aggregate "everything's
+  done" while any reported issue is unverified. If a fix is only designed/built,
+  say "OPEN — designed, not built/verified", loudly.
+- **Use the `e2e-verifier` agent to own VERIFY**: it re-runs my reproduction and
+  reports verified-vs-NOT, never claims green it didn't exercise. A feature is
+  not closeable until e2e-verifier confirms the symptom is gone with no orphans
+  (e.g. exactly one version/generation running, the requested leak absent).
+- When I say "do all of them," that means **all BUILT + DEPLOYED + VERIFIED**,
+  not "some built, the rest designed."
+- **Before I ever say "done," show an explicit per-item CHECKED / NOT-CHECKED
+  list.** A feature is done only when the **e2e-verifier walks the ba-curator
+  feature/acceptance list** (the contract) and marks each acceptance item
+  checked against live behavior. I then surface that exact list — what was
+  verified and what was NOT — and lead with the NOT-checked. No "done" without
+  the list. ba-curator doc is the source of the checklist; e2e-verifier is the
+  one that ticks the boxes against reality.
+
+### Doc-driven verification (CRITICAL for long sessions)
+
+Long sessions lose context and drift into false "done" answers. Defense: a
+**single centralized source-of-truth doc, owned + maintained by ba-curator**
+(the requirements register + feature acceptance lists + e2e-test-history). Every
+agent verifies against THAT doc, not against memory or vibes — so no check step
+is silently skipped.
+
+- The **e2e-verifier** (and any verifying agent) reads the ba-curator doc as the
+  authoritative checklist and ticks each item against live behavior.
+- **Escalation chain when unsure** (never guess, never fabricate a green):
+  1. e2e/verifying agent unsure about an acceptance item → **consult the
+     ba-curator doc / ask the ba-curator agent**.
+  2. Still unsure (doc ambiguous or silent) → **ask the user (me)** — do not
+     invent an answer.
+- ba-curator keeps the doc in lockstep with reality (every shipped/building
+  feature ↔ a checklist item; every found flaw ↔ a test case). If verification
+  reveals the doc is wrong/stale, fix the doc first, then re-verify.
+- **Per cycle:** ba-curator states up front (DEFINE) exactly what must be done
+  this cycle — the deliverables + acceptance items. At VERIFY, e2e-verifier
+  goes through those items **one by one**, each ticked against live behavior.
+  The cycle is not done until every item is individually checked (or explicitly
+  surfaced as NOT-checked, with why).
+
 ## Code
 
 - Match the conventions of the surrounding code.
