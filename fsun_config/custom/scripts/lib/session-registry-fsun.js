@@ -434,6 +434,25 @@ function loadAliasContext(aliasName, opts = {}) {
       .flatMap(wt => fsun.findNativeTranscripts(wt).map(t => ({ ...t, worktree: wt })))
       .sort((a, b) => b.mtime - a.mtime);
     if (sinceDate) transcripts = transcripts.filter(t => t.mtime >= sinceDate);
+    // A folder claimed by 2+ aliases shares one transcript dir. By default,
+    // scope such folders' transcripts to THIS alias's member sessions.
+    // ECC shortIds are the LAST 8 chars of the transcript uuid (see upstream
+    // session-end.js), so match on the filename suffix "<shortId>.jsonl".
+    // A member without a usable id can't be matched and is excluded there.
+    // opts.allTranscripts=true loads everything regardless (richer context).
+    const sharedWts = new Set(
+      alias.worktrees
+        .filter(wt => aliasesForWorktree(reg, wt).length > 1)
+        .map(wt => path.resolve(wt))
+    );
+    if (!opts.allTranscripts && sharedWts.size > 0) {
+      const memberIds = members.map(s => s.shortId).filter(id => id && id !== 'no-id');
+      const before = transcripts.length;
+      transcripts = transcripts.filter(t =>
+        !sharedWts.has(path.resolve(t.worktree)) || memberIds.some(id => t.name.endsWith(`${id}.jsonl`))
+      );
+      history.scopedOut = before - transcripts.length;
+    }
     const withDialog = transcripts.map(t => ({ ...t, dialog: fsun.extractDialog(t.path) }));
     const filtered = fsun.filterByTopic(withDialog, topic, { useLLM: opts.useLLM !== false });
     let charsUsed = 0;
@@ -479,6 +498,7 @@ function renderAliasLoad(result) {
   out.push(`Budget: ${result.budget.tokens.toLocaleString()} tokens`);
   if (result.topic) out.push(`Topic filter: "${result.topic}"`);
   out.push(`Included: ${h.transcripts.length}, skipped (over budget): ${h.skipped}, used: ${h.tokensUsed.toLocaleString()} tokens`);
+  if (h.scopedOut) out.push(`Scoped out (other alias in shared folder): ${h.scopedOut} — use --all-transcripts to include`);
   out.push('');
   for (const t of h.transcripts) {
     out.push('---');
@@ -500,8 +520,10 @@ Daily driver:
   sessions                          Overview: current folder's alias, alias table,
                                     unassigned folders (with suggested names)
   sessions switch <alias>           Load the WHOLE alias context (all summaries +
-                                    transcripts from every attached folder)
+                                    transcripts from every attached folder;
+                                    shared folders scoped to THIS alias by default)
     --topic "kw" --budget 1M --since 7d --no-history --no-llm
+    --all-transcripts               include other aliases' transcripts too
 
 Organize:
   sessions alias create <name> [path]   Name a project (default folder: cwd)
