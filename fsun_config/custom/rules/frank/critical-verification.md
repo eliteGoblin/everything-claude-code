@@ -92,6 +92,15 @@ path you did not run. If e2e cannot be completed, say so explicitly: list which
 checkpoints are **un-exercised and WHY**, and hand them back — do not round an
 un-run path up to success.
 
+**Match the verification environment to the task:**
+- **A live/prod issue** (incident, anomaly, "is prod healthy", a real dashboard/metric
+  concern) → confirm, then investigate **on prod first** (read-only / light RO probing —
+  that's where the real signal is). Do NOT try to reproduce a prod incident on nonprod.
+- **A new feature / behavior check** — especially anything needing **destructive setup**
+  ("fake-break" it to prove it works: simulate a Firestore outage, delete a binding to
+  prove fallback + alert fire) → do it on **nonprod only, never prod**.
+- Unsure which env or what exactly to verify → consult the **architect** agent.
+
 ## Definition of done — critical task
 - [ ] Material claims labeled FACT / INFERENCE / ASSUMPTION.
 - [ ] Intermediate data sanity-checked/asserted; no conclusion drawn on a failed query.
