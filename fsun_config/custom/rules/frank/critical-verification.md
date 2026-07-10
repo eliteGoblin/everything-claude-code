@@ -85,6 +85,13 @@ would CONTRADICT it.
 - "Everything is broken" and "one specific thing is broken" make **different predictions** —
   run the query that distinguishes them *before* concluding.
 
+### 8. Exercise it end-to-end before calling it DONE
+A feature/task is DONE only after its **behavior is actually exercised end-to-end** —
+deployed, hit with a real request, and the result observed. Never report "green" for a
+path you did not run. If e2e cannot be completed, say so explicitly: list which
+checkpoints are **un-exercised and WHY**, and hand them back — do not round an
+un-run path up to success.
+
 ## Definition of done — critical task
 - [ ] Material claims labeled FACT / INFERENCE / ASSUMPTION.
 - [ ] Intermediate data sanity-checked/asserted; no conclusion drawn on a failed query.
@@ -93,4 +100,5 @@ would CONTRADICT it.
 - [ ] Presented with evidence, confidence, and explicitly-stated unverified gaps.
 - [ ] Cause attributed from the failing operation's OWN record — not inferred from co-occurring errors.
 - [ ] Proposed cause (esp. a "global" one) tested against contradicting evidence — checked whether anything on the same path succeeds.
+- [ ] Feature/task exercised end-to-end (deployed + real request + observed result) before "done"; any un-exercised checkpoints reported with reasons.
 - [ ] Irreversible steps gated on explicit confirmation.
