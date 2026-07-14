@@ -14,6 +14,16 @@ User intent for this run: **$ARGUMENTS**
 ## When NOT to use
 Trivial changes (typos, one-line fixes, formatting) skip this cycle - just do them. This is for features and substantive changes.
 
+## The cycle is a loop, not a line — converge to the spec
+Run the stages in order, but the cycle **repeats until the implementation matches the spec.** Think of it as shrinking one number each pass: the **gap** = (acceptance criteria not yet VERIFIED) + (open CRITICAL/HIGH defects). Anything that tells you the gap is still open feeds back to BUILD:
+- a reviewer finds an issue, the e2e-verifier marks an item NOT VERIFIED, an **adversarial / red-team pass finds an exploit** (for security / anti-tamper / self-protection features), or the user reports a defect
+- → fix it, **update the SAME PR**, re-run REVIEW on the new diff, re-run VERIFY on the affected items
+- → report the gap: **"was N open, now M"** — every iteration must make M < N (continuous improvement). If a pass does NOT shrink the gap, say so and change approach — don't loop on the same fix.
+
+**Done = the gap is zero and re-verified:** every acceptance item VERIFIED (exercised, per Stage 5), no open CRITICAL/HIGH, any adversarial pass finds nothing easy, CI green, all Copilot threads resolved. Not "built", not "merged" — the gap closed. Surface it **OPEN-first** (lead with what's still not verified); never an aggregate "done" while any item is open.
+
+Keep each loop cheap: fix → push to the PR → re-review only the new diff → re-verify only the touched acceptance items. You only go back to DEFINE if the **spec itself** changed. For products with an adversarial verifier (e.g. a red-team agent), treat a found exploit as a defect on this same loop: harden → update PR → re-run the red-team → repeat until it can't get in.
+
 ## Stages
 
 ### Stage 0 - Setup (only if docs aren't bootstrapped)
