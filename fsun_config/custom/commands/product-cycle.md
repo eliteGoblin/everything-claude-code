@@ -140,5 +140,17 @@ The chain end-to-end: `/product-cycle` per feature → `e2e-verifier` verifies e
 merge → `release-verifier` verifies the whole train before promotion → `ba-curator`
 records the release.
 
+### Project-scoped SRE agent (a pattern ECC ships — not an agent)
+Each project SHOULD define its own **`.claude/agents/sre.md`** — a live-signals
+specialist that knows THAT project's dashboards, alerts, log events, runbooks, and
+baselines. It is **READ-ONLY on prod**, works alongside `release-verifier`'s
+pre-promotion evidence gathering (release-verifier is pre-promotion only; the SRE
+agent's post-promotion sweep evidence flows to `ba-curator`'s release record), runs
+standalone for incident triage and health sweeps, and maintains its role memory
+(`.claude/agents/memory/sre.md`).
+ECC deliberately does NOT ship a generic SRE agent: the agent's entire value is
+project-specific knowledge, so the definition lives in each repo — only the pattern
+is cross-project. Reference implementation: `call_summary_agent`'s `.claude/agents/sre.md`.
+
 ## Output between stages
 After each stage, give the user a 3-5 line status: which stage finished, what the agent produced, whether the next step is a gate (needs them) or routine (proceeds automatically).

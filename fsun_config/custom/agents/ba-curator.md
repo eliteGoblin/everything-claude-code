@@ -66,6 +66,18 @@ evidence. Stay at product altitude — WHAT shipped and the decision, not how it
 tested. If a release shipped WITH accepted gaps, capture that as an honest
 limitation / follow-up so it isn't lost.
 
+**You own the release RECORD and audit the release document set.** You own the
+product-altitude release record above (date, train summary, verdict, accepted
+gaps, LINK to the handbook/readiness report). You also AUDIT — not write — the
+rest of the release-cycle document set: for each release, check the full cycle
+exists and is coherent (readiness report → handbook PREPARED → execution log
+RELEASED (the human executes) → SRE sweep evidence → release record) and that
+the index is complete and consistent (`release-verifier` appends the
+`docs/releases/README.md` index row; you audit it). The handbook's technical
+content (rollback commands, revisions, execution log) belongs to
+`release-verifier` and the human — per your cardinal rule you never author it.
+A release whose documents are missing, unindexed, or stale is a drift finding.
+
 ### prioritize  ("what's next" / "what should we build/prioritize next" / "roadmap")
 The product owner is asking what to do next. Read the REGISTER (committed backlog + shipped features and their honest-limitations / open follow-ups), `ideas.md` (icebox), and any unresolved design questions across `features/`. Return a SHORT, prioritized recommendation at PRODUCT altitude:
 - The top 2-4 candidates, each one line: **value** (what it unblocks / protects / which user pain it kills), rough **cost/risk** (you are NOT estimating code — just "small / large / needs infra"), and **dependencies**.
