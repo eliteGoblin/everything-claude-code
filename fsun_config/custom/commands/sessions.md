@@ -213,6 +213,14 @@ if (verb === 'load') {
   console.log('Date:     ' + session.date);
   console.log('Lines:    ' + stats.lineCount);
   console.log('Size:     ' + sm.getSessionSize(session.sessionPath));
+  const native = fsun.resolveNativeSession(session.filename);
+  if (native.error) {
+    console.log('Native:   not found (' + native.error + ')');
+  } else {
+    console.log('Native:   ' + native.uuid + (native.ambiguous ? ' (ambiguous: ' + native.ambiguous + ' matches, newest shown)' : ''));
+    console.log('Resume:   ' + native.resumeCommand);
+    console.log('Transcript: ' + native.transcriptPath);
+  }
 }
 " "$@"
 ```
