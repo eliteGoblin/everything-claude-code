@@ -5,7 +5,7 @@
   then poll `pulls/<n>/reviews` for user `copilot-pull-request-reviewer[bot]`
   (posted ~30+ min later). Branch protection requires ALL review threads
   resolved (GraphQL resolveReviewThread; a reply alone is not enough) and green
-  checks; npm-audit + windows hooks-test failures are PRE-EXISTING → merge
+  checks; npm audit + windows hooks-test failures are PRE-EXISTING → merge
   needs `--admin` (get Frank's explicit ok).
 - gh has two accounts: corp ZSun1_CCgroup (active default) and eliteGoblin
   (fork owner). `gh auth switch --user eliteGoblin` before push/PR/merge on the

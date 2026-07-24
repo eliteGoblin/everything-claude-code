@@ -67,7 +67,7 @@ mismatch) — fixed pre-merge. Copilot: 1 valid finding (info alias resolution)
 - Registry lost-update race: concurrent Claude sessions clobber
   ~/.claude/session-registry.json (observed 2026-07-23: alias vanished; had to
   recreate). Consider lock file or read-merge-write.
-- Fork CI hygiene: npm-audit HIGH vulns (js-yaml via markdownlint-cli,
+- Fork CI hygiene: npm audit HIGH vulns (js-yaml via markdownlint-cli,
   linkify-it) + flaky hooks/plugin-hook-bootstrap.test.js on windows/node18 —
   pre-existing, block green merges; branch protection required --admin bypass.
 - Local ECC main had 3 unpushed commits → PR #23 squash absorbed their content
