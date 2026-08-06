@@ -3,7 +3,8 @@
 ## PR/merge mechanics on this fork (proven 2026-07-23/24, PR #23)
 - Copilot review WORKS here but never appears in reviewRequests — request it,
   then poll `pulls/<n>/reviews` for user `copilot-pull-request-reviewer[bot]`
-  (posted ~30+ min later). Branch protection requires ALL review threads
+  (latency varies: ~3 min on PR #25, ~30+ min on PR #23 — poll, don't assume
+  either). Branch protection requires ALL review threads
   resolved (GraphQL resolveReviewThread; a reply alone is not enough) and green
   checks; npm audit + windows hooks-test failures are PRE-EXISTING → merge
   needs `--admin` (get Frank's explicit ok).
