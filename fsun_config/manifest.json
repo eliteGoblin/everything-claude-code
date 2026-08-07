@@ -101,6 +101,7 @@
     "commands/done.md",
     "commands/product-cycle.md",
     "commands/sessions.md",
+    "commands/ticket-sizing.md",
     "rules/common/behavioral-guidelines.md",
     "rules/common/session-log.md",
     "rules/frank/agent-self-learning.md",
