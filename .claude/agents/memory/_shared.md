@@ -3,7 +3,8 @@
 ## PR/merge mechanics on this fork (proven 2026-07-23/24, PR #23)
 - Copilot review WORKS here but never appears in reviewRequests — request it,
   then poll `pulls/<n>/reviews` for user `copilot-pull-request-reviewer[bot]`
-  (posted ~30+ min later). Branch protection requires ALL review threads
+  (latency varies: ~3 min on PR #25, ~30+ min on PR #23 — poll, don't assume
+  either). Branch protection requires ALL review threads
   resolved (GraphQL resolveReviewThread; a reply alone is not enough) and green
   checks; npm audit + windows hooks-test failures are PRE-EXISTING → merge
   needs `--admin` (get Frank's explicit ok).
@@ -17,6 +18,27 @@
   and cut from origin/main (worktree) unless you intend to ship the backlog.
 - `node fsun_config/ecc.js sync` works fine from a worktree of origin/main —
   use that to deploy to ~/.claude without touching the dirty shared checkout.
+
+## ecc.js sync is not a mirror — it only adds and overwrites (proven 2026-08-07, PR #27)
+- `sync()` never deletes a destination it no longer tracks, and `unpick()` only
+  filters `manifest.upstream` — there is NO unpick equivalent for `custom[]`.
+  Removing an entry from `manifest.custom` therefore leaves the installed copy at
+  `~/.claude/` forever: the karpathy-guidelines skill stayed live for two months
+  after `f3b9d139` de-registered it. Delete the install by hand after any removal.
+- Custom entries also bypass `manifest.hashes` (only the upstream loop writes it),
+  so `ecc.js diff` gives ZERO drift detection for custom files. A hand-edit of an
+  installed custom rule will never be reported.
+
+## ~/.claude can be ahead of main — check before trusting either (proven 2026-08-07)
+- Rules that live only on an unmerged branch stay installed and look authoritative,
+  then get silently REVERTED the next time `sync` runs from a main checkout.
+  Two live cases: `production-safety.md` was installed since 2026-05-20 but its only
+  commit sat on `feat/production-safety-guardrail` (never on main); the stronger
+  delegation wording was installed until a sync from main overwrote it with the
+  weaker text (PR #25 still open).
+- Before concluding "this rule says X", check BOTH: `diff ~/.claude/rules/... <repo copy>`
+  and `git log --all --oneline -S "<distinctive phrase>" -- fsun_config/`. The system
+  context loaded at session start can be a third, different version again.
 
 ## sessions registry race
 - ~/.claude/session-registry.json is read-modify-write with no locking;
