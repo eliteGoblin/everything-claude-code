@@ -85,4 +85,6 @@ cross-project habit → instinct/ECC rule.
      reflection; MemGPT/Letta (Packer 2023) on a small always-loaded core plus
      read-on-demand rest; Mem0's ADD/UPDATE/DELETE on correction-over-append; the
      2026 memory-poisoning/misevolution work on evidence-gated writes and provenance.
-     Full write-up: git log -- this file, commit f4853445. -->
+     Full write-up:
+       git show f4853445 -- fsun_config/custom/rules/frank/agent-self-learning.md
+     -->
