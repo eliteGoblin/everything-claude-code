@@ -108,6 +108,7 @@
     "rules/frank/learn-from-mistakes.md",
     "rules/frank/pr-workflow.md",
     "rules/frank/preferences.md",
+    "rules/frank/production-safety.md",
     "scripts/hooks/session-alias-hint-fsun.js",
     "scripts/hooks/session-save-gate-fsun.js",
     "scripts/lib/session-manager-fsun.js",

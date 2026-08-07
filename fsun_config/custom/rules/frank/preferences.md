@@ -96,9 +96,11 @@ or keep checking my progress.
 - **Report results, not permission requests.** Status = what I DID + what's left,
   not "may I?".
 - **Pause ONLY when genuinely blocked:** (a) a real conflict with another instruction
-  or reality, (b) genuinely ambiguous (can't infer a sane default), or (c) a
-  destructive/irreversible **prod** action production-safety gates. "It's nonprod /
-  isolated / reversible" → just do it; experiment freely.
+  or reality, (b) genuinely ambiguous (can't infer a sane default), or (c) any
+  **prod**-touching action [production-safety](./production-safety.md) gates —
+  destructive, irreversible, **or an undiscussed prod change** (deploy, config edit,
+  flag flip, restart/scale). "It's nonprod / isolated / reversible" → just do it;
+  experiment freely.
 - If I have to tell Frank "stop checking with me, just do it" — that's a failure of
   this rule. Internalize it.
 
@@ -109,6 +111,10 @@ or keep checking my progress.
   self-contained brief. The main thread does reasoning, decisions, relaying (SendMessage),
   and quick reads only — so Frank can talk and steer while work runs. Never block the main
   thread on execution.
+- **A subagent never self-approves a prod gate.** Only Frank can give the go that
+  [production-safety](./production-safety.md) requires, and he is not in the subagent's
+  loop. A subagent that reaches a gate stops, reports what it would run and why, and
+  hands the decision back to the main thread. It never reads its brief as consent.
 - **Coordinate parallel agents.** Use git worktrees; never switch branches in a shared
   checkout. **Never run two infra/Terraform/app changes against the same env at once.**
 - **Serialize pipeline changes.** When multiple changes target the same env's CI/pipeline,
