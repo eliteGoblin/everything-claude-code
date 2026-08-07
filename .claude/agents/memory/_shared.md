@@ -8,9 +8,23 @@
   resolved (GraphQL resolveReviewThread; a reply alone is not enough) and green
   checks; npm audit + windows hooks-test failures are PRE-EXISTING → merge
   needs `--admin` (get Frank's explicit ok).
-- gh has two accounts: corp ZSun1_CCgroup (active default) and eliteGoblin
-  (fork owner). `gh auth switch --user eliteGoblin` before push/PR/merge on the
-  fork; ALWAYS switch back to ZSun1_CCgroup immediately after.
+- Branch protection on main (verified 2026-08-07 via `branches/main/protection`):
+  the ONLY required check is **`fsun-ci`**. `Security Scan` and the ~34-job
+  `Test (os, node, pm)` matrix are NOT required — a red Security Scan is
+  pre-existing (fails on `main` itself, e.g. `fecab0b0`) and must not be treated
+  as a blocker. `strict: true` → every PR must be up to date with main, so a
+  queue of PRs needs a merge/rebase of main into each one in turn.
+- gh has two accounts: corp ZSun1_CCgroup (active default, **read-only** on the
+  fork) and eliteGoblin (owner). Prefer per-command
+  `export GH_TOKEN=$(gh auth token -h github.com -u eliteGoblin)` over
+  `gh auth switch` — same access, no global state to forget to switch back.
+  Symptoms of using the wrong one: `404` on PATCH/merge, and
+  `Unauthorized: As an Enterprise Managed User` on addComment.
+- `gh pr list/view` with no `--repo` resolves to **upstream** (affaan-m), not the
+  fork — PR numbers come back in the thousands. Always pass
+  `--repo eliteGoblin/everything-claude-code`.
+- Pushing a detached HEAD to a NEW branch needs the full refspec
+  (`HEAD:refs/heads/<name>`); `HEAD:<name>` fails with "Head ref must be a branch".
 - The shared checkout at ~/devel/everything-claude-code accumulates UNPUSHED
   main commits from other sessions. A branch cut from local main then PRed
   against origin/main carries those commits into the PR diff (and a squash
@@ -18,6 +32,24 @@
   and cut from origin/main (worktree) unless you intend to ship the backlog.
 - `node fsun_config/ecc.js sync` works fine from a worktree of origin/main —
   use that to deploy to ~/.claude without touching the dirty shared checkout.
+
+## commands/sessions.md is double-tracked — its "drift" is by design (2026-08-07)
+- It sits in BOTH `manifest.upstream` and `manifest.custom`. Every `sync` therefore
+  reports it twice (`UPDATE:` then `UPDATE (custom):`) and a byte-compare of the
+  UPSTREAM source against the install will ALWAYS differ — the custom override wins
+  and is written last. This is correct. Do not "fix" it; compare against the custom
+  copy. Consequence: `sync` can never report 0 copied.
+
+## Cherry-picking one upstream commit can need an unlisted prerequisite (2026-08-07, PR #28)
+- Upstream `ab373716` (#2609) is a one-line addition to `KNOWN_MODEL_WINDOW_TOKENS`
+  — a table this fork did not have. It conflicted until `cd39df15` (#2468), which
+  introduced the table, was picked first; then both applied clean.
+- Rule: when an upstream cherry-pick conflicts, check whether the hunk's CONTEXT
+  exists on the fork before hand-resolving. If it does not, pick the commit that
+  introduced it — hand-writing the missing mechanism forks the file from upstream
+  and guarantees a conflict at every future sync.
+- Upstream code comments cite the ISSUE number while the commit cites the PR
+  (#2461 = issue, #2468 = PR). Copilot reads that as a mismatch; it is not.
 
 ## ecc.js sync is not a mirror — it only adds and overwrites (proven 2026-08-07, PR #27)
 - `sync()` never deletes a destination it no longer tracks, and `unpick()` only
