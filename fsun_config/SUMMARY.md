@@ -52,7 +52,8 @@ upstream edit to a **tracked** file lands silently, and the next `ecc.js sync`
 installs it as an always-on rule. Check these before syncing.
 
 **`rules/common/agents.md` — "Delegation Completion Contract"** (tracked in
-`manifest.upstream`; added upstream after this fork's last sync). It states:
+the `upstream[]` list in `fsun_config/manifest.json`; added upstream after this
+fork's last sync). It states:
 
 > Never end your turn with "waiting for background agents" … If you delegate, you
 > own collection. Wait for results, integrate them, then return. Fire-and-forget
