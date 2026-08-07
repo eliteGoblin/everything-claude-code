@@ -8,18 +8,20 @@
   resolved (GraphQL resolveReviewThread; a reply alone is not enough) and green
   checks; npm audit + windows hooks-test failures are PRE-EXISTING → merge
   needs `--admin` (get Frank's explicit ok).
-- Branch protection on main (verified 2026-08-07 via `branches/main/protection`):
+- Branch protection on main (verified 2026-08-07 via
+  `gh api repos/eliteGoblin/everything-claude-code/branches/main/protection`):
   the ONLY required check is **`fsun-ci`**. `Security Scan` and the ~34-job
   `Test (os, node, pm)` matrix are NOT required — a red Security Scan is
   pre-existing (fails on `main` itself, e.g. `fecab0b0`) and must not be treated
   as a blocker. `strict: true` → every PR must be up to date with main, so a
   queue of PRs needs a merge/rebase of main into each one in turn.
 - gh has two accounts: corp ZSun1_CCgroup (active default, **read-only** on the
-  fork) and eliteGoblin (owner). Prefer per-command
-  `export GH_TOKEN=$(gh auth token -h github.com -u eliteGoblin)` over
-  `gh auth switch` — same access, no global state to forget to switch back.
-  Symptoms of using the wrong one: `404` on PATCH/merge, and
-  `Unauthorized: As an Enterprise Managed User` on addComment.
+  fork) and eliteGoblin (owner). Scope the owner token to the single command —
+  `GH_TOKEN=$(gh auth token -h github.com -u eliteGoblin) gh pr merge …` — rather
+  than `gh auth switch`, which mutates gh's stored config and must be switched
+  back. (`export GH_TOKEN=…` also works but leaks the token to the rest of that
+  shell; use the inline form.) Symptoms of using the wrong account: `404` on
+  PATCH/merge, and `Unauthorized: As an Enterprise Managed User` on addComment.
 - `gh pr list/view` with no `--repo` resolves to **upstream** (affaan-m), not the
   fork — PR numbers come back in the thousands. Always pass
   `--repo eliteGoblin/everything-claude-code`.
