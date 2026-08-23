@@ -139,4 +139,3 @@ the branch's evidence note.
 sizes the verifier re-measured, three were off by 7–34% (references dir 188 KB → 175 KB; a skill
 313 KB → 233 KB; a command group 62,430 → 58,217 B) while every verbatim quote matched. Treat a
 size with no stated `du`/`wc` command as DERIVED ±25%, not FACT.
-

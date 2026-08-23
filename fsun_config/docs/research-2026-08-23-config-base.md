@@ -1,3 +1,4 @@
+<!-- markdownlint-disable -->
 # Synthesis — Should the Claude Code config be re-based on mattpocock/skills, and how to remove verbosity, context bloat, and multi-source pain
 
 Date 2026-08-23. PI synthesis of a 7-branch, 2-round programme, verified by citation-verifier (§8) and finalised after Frank's decisions (block below). Evidence notes: `$D/evidence/*.md`; branch reports: `$D/round1/`, `$D/round2/`. Reader: Frank.
