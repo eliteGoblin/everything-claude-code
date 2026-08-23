@@ -18,10 +18,19 @@
 - gh has two accounts: corp ZSun1_CCgroup (active default, **read-only** on the
   fork) and eliteGoblin (owner). Scope the owner token to the single command —
   `GH_TOKEN=$(gh auth token -h github.com -u eliteGoblin) gh pr merge …` — rather
-  than `gh auth switch`, which mutates gh's stored config and must be switched
-  back. (`export GH_TOKEN=…` also works but leaks the token to the rest of that
-  shell; use the inline form.) Symptoms of using the wrong account: `404` on
-  PATCH/merge, and `Unauthorized: As an Enterprise Managed User` on addComment.
+  than `gh auth switch`: it mutates gh's shared config, and a CONCURRENT session
+  can switch it back mid-run (happened 2026-08-24: merge failed `Unauthorized: As
+  an Enterprise Managed User` minutes after a successful switch). `git push` via
+  the credential helper also uses the ACTIVE account regardless of any earlier
+  switch — push with the token in the URL for one command. Wrong-account symptoms:
+  `404`/`403` on push/merge, `Unauthorized: As an Enterprise Managed User`.
+
+## gh CLI hangs under Claude Code Bash with full env (2026-08-24)
+- Even `gh --version` can hang indefinitely with the full inherited environment;
+  intermittent, no single env var is the cause (bisects gave contradictory
+  culprits; clean env always worked). Workaround that held for every call:
+  `env -i PATH=/usr/bin:/bin HOME="$HOME" [GH_TOKEN=…] gh …` (add `timeout Ns`).
+  Plain `curl` to api.github.com is unaffected and is the fallback.
 - `gh pr list/view` with no `--repo` resolves to **upstream** (affaan-m), not the
   fork — PR numbers come back in the thousands. Always pass
   `--repo eliteGoblin/everything-claude-code`.
